@@ -139,10 +139,38 @@
 
         <div id="alert-container" class="hidden"></div>
 
-        <!-- 1. KEY METRICS SECTION -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <!-- 1. KEY METRICS SECTION (6 Cards Grid) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
 
-            <!-- Card 1: Voltan Bateri -->
+            <!-- Card 1: Voltan Solar -->
+            <div class="glass-card glass-card-hover rounded-2xl p-5 relative overflow-hidden transition-all duration-300">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Voltan Solar</span>
+                    <span class="p-2 rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                        <i class="fa-solid fa-sun text-lg"></i>
+                    </span>
+                </div>
+                
+                <div class="flex items-center justify-between mt-1">
+                    <div>
+                        <div class="flex items-baseline gap-1">
+                            <span id="metric-solar-voltage" class="text-3xl font-bold text-white tracking-tight">0.00</span>
+                            <span class="text-lg font-semibold text-yellow-400">V</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">Panel Solar 18V</p>
+                    </div>
+
+                    <div class="relative w-16 h-16 flex items-center justify-center">
+                        <svg class="w-full h-full" viewBox="0 0 36 36">
+                            <path class="text-gray-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path id="gauge-solar-voltage" class="gauge-circle text-yellow-400" stroke-dasharray="100, 100" stroke-dashoffset="100" stroke-linecap="round" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        </svg>
+                        <span id="solar-voltage-pct" class="absolute text-[10px] font-bold text-gray-300">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Voltan Bateri -->
             <div class="glass-card glass-card-hover rounded-2xl p-5 relative overflow-hidden transition-all duration-300">
                 <div class="flex justify-between items-start mb-2">
                     <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Voltan Bateri</span>
@@ -170,7 +198,7 @@
                 </div>
             </div>
 
-            <!-- Card 2: Arus Beban -->
+            <!-- Card 3: Arus Beban -->
             <div class="glass-card glass-card-hover rounded-2xl p-5 relative overflow-hidden transition-all duration-300">
                 <div class="flex justify-between items-start mb-2">
                     <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Arus Beban</span>
@@ -198,7 +226,7 @@
                 </div>
             </div>
 
-            <!-- Card 3: Kuasa Semasa (Watts) -->
+            <!-- Card 4: Kuasa Semasa (Watts) -->
             <div class="glass-card glass-card-hover rounded-2xl p-5 relative overflow-hidden transition-all duration-300">
                 <div class="flex justify-between items-start mb-2">
                     <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Kuasa Real-time</span>
@@ -219,7 +247,7 @@
                 </div>
             </div>
 
-            <!-- Card 4: Suhu & Kelembapan -->
+            <!-- Card 5: Suhu & Kelembapan -->
             <div class="glass-card glass-card-hover rounded-2xl p-5 relative overflow-hidden transition-all duration-300">
                 <div class="flex justify-between items-start mb-2">
                     <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Cuaca / DHT11</span>
@@ -251,7 +279,7 @@
                 </div>
             </div>
 
-            <!-- Card 5: Jumlah Tenaga (kWh) -->
+            <!-- Card 6: Jumlah Tenaga (kWh) -->
             <div class="glass-card glass-card-hover rounded-2xl p-5 relative overflow-hidden transition-all duration-300">
                 <div class="flex justify-between items-start mb-2">
                     <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Tenaga Terkumpul</span>
@@ -276,17 +304,17 @@
 
         </section>
 
-        <!-- 2. MAIN CHARTS & SIMULATOR CONTROL SECTION -->
+        <!-- 2. MAIN CHARTS & CONTROL SECTION -->
         <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             <div class="lg:col-span-2 space-y-6">
-                <!-- Chart 1: Voltan & Arus -->
+                <!-- Chart 1: Voltan Solar & Arus -->
                 <div class="glass-card rounded-2xl p-5">
                     <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
                         <div>
                             <h2 class="text-base font-bold text-white flex items-center gap-2">
                                 <i class="fa-solid fa-chart-line text-amber-400"></i>
-                                Graph Voltan (V) & Arus (A)
+                                Graph Voltan Solar (V) & Arus (A)
                             </h2>
                             <p class="text-xs text-gray-400">Trend masa nyata dari JSONBin / ESP32</p>
                         </div>
@@ -510,7 +538,7 @@
                             type: 'linear', position: 'left',
                             title: { display: true, text: 'Voltan (V)', color: '#facc15', font: chartFont },
                             grid: { color: gridColor }, ticks: { color: tickColor, font: chartFont },
-                            min: 0, max: 20
+                            min: 0, max: 25
                         },
                         yA: {
                             type: 'linear', position: 'right',
@@ -625,6 +653,7 @@
             document.getElementById('last-update-time').innerText = timeStr;
             renderBannerAlert(alertMsgs);
 
+            document.getElementById('metric-solar-voltage').innerText = solarV.toFixed(2);
             document.getElementById('metric-voltage').innerText = batteryV.toFixed(2);
             document.getElementById('metric-current').innerText = current.toFixed(2);
             document.getElementById('metric-power').innerText = power.toFixed(2);
@@ -633,6 +662,7 @@
             document.getElementById('metric-energy').innerText = energyKWh.toFixed(4);
             document.getElementById('metric-wh').innerText = accumulatedEnergyWh.toFixed(2);
 
+            updateGauge('gauge-solar-voltage', 'solar-voltage-pct', solarV, 25);
             updateGauge('gauge-voltage', 'voltage-pct', batteryV, 15);
             updateGauge('gauge-current', 'current-pct', current, 5);
 
@@ -718,6 +748,7 @@
 
             const filteredLogs = dataLogs.filter(log => {
                 const matchesSearch = log.time.toLowerCase().includes(searchVal) ||
+                                      log.solarV.toString().includes(searchVal) ||
                                       log.batteryV.toString().includes(searchVal) ||
                                       log.current.toString().includes(searchVal);
                 const matchesStatus = filterStatus === 'all' || log.status === filterStatus;
@@ -741,7 +772,7 @@
                 tr.innerHTML = `
                     <td class="py-2.5 px-4 text-gray-500">${log.id}</td>
                     <td class="py-2.5 px-4 text-gray-300 font-sans">${log.time}</td>
-                    <td class="py-2.5 px-4 text-amber-300 font-semibold">${log.solarV.toFixed(2)}</td>
+                    <td class="py-2.5 px-4 text-yellow-300 font-semibold">${log.solarV.toFixed(2)}</td>
                     <td class="py-2.5 px-4 text-amber-300 font-semibold">${log.batteryV.toFixed(2)}</td>
                     <td class="py-2.5 px-4 text-blue-300 font-semibold">${log.current.toFixed(2)}</td>
                     <td class="py-2.5 px-4 text-emerald-300 font-semibold">${log.power.toFixed(2)}</td>
