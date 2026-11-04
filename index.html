@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="ms">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,99 +16,84 @@
     .card h3 { color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
     .card .value { font-size: 2.2rem; font-weight: bold; color: #f8fafc; }
     .card .unit { font-size: 1rem; color: #64748b; margin-left: 4px; }
-    
-    .voltage { border-top: 4px solid #f59e0b; }
+
+    .solar { border-top: 4px solid #f59e0b; }
+    .battery { border-top: 4px solid #10b981; }
     .current { border-top: 4px solid #3b82f6; }
-    .power { border-top: 4px solid #10b981; }
+    .power { border-top: 4px solid #8b5cf6; }
     .temp { border-top: 4px solid #ef4444; }
     .humidity { border-top: 4px solid #06b6d4; }
-    
-    .footer { text-align: center; margin-top: 40px; color: #64748b; font-size: 0.8rem; }
   </style>
 </head>
 <body>
 
   <div class="header">
-    <h1>Solar System Realtime Monitoring</h1>
-    <div class="status-badge" id="live-status">Tersambung ke Cloud</div>
+    <h1>Realtime Solar Monitoring System</h1>
+    <div class="status-badge" id="status">Sistem Aktif</div>
   </div>
 
   <div class="grid">
-    <div class="card voltage">
+    <div class="card solar">
+      <h3>Voltan Solar</h3>
+      <div><span class="value" id="solar_v">0.00</span><span class="unit">V</span></div>
+    </div>
+    <div class="card battery">
       <h3>Voltan Bateri</h3>
-      <div><span class="value" id="val-voltage">0.00</span><span class="unit">V</span></div>
+      <div><span class="value" id="battery_v">0.00</span><span class="unit">V</span></div>
     </div>
-    
     <div class="card current">
-      <h3>Arus Beban</h3>
-      <div><span class="value" id="val-current">0.00</span><span class="unit">A</span></div>
+      <h3>Arus (ACS712)</h3>
+      <div><span class="value" id="current">0.00</span><span class="unit">A</span></div>
     </div>
-    
     <div class="card power">
       <h3>Kuasa (Power)</h3>
-      <div><span class="value" id="val-power">0.00</span><span class="unit">W</span></div>
+      <div><span class="value" id="power">0.00</span><span class="unit">W</span></div>
     </div>
-    
     <div class="card temp">
       <h3>Suhu</h3>
-      <div><span class="value" id="val-temp">0.0</span><span class="unit">°C</span></div>
+      <div><span class="value" id="temp">0.0</span><span class="unit">°C</span></div>
     </div>
-    
     <div class="card humidity">
       <h3>Kelembapan</h3>
-      <div><span class="value" id="val-humidity">0.0</span><span class="unit">%</span></div>
+      <div><span class="value" id="humidity">0.0</span><span class="unit">%</span></div>
     </div>
-  </div>
-
-  <div class="footer">
-    Terakhir Diperbarui: <span id="last-update">-</span>
   </div>
 
   <script>
-    // MASUKKAN BIN ID ANDA DI SINI
-    const BIN_ID = "MASUKKAN_BIN_ID_ANDA";
-    const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
+    const BIN_ID = "6aea11c0ffd5d16053a31c40";
+    const MASTER_KEY = "$2a$10$8WaYL8FLouqj5bL1QiQAxupywEdqYVF1EwFiz87jNg4WH0jVdmnA";
 
-    async function fetchSolarData() {
+    const URL = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
+
+    async function fetchData() {
       try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(URL, {
           headers: {
-            'X-Bin-Meta': 'false'
+            "X-Master-Key": MASTER_KEY
           }
         });
-
-        if (!response.ok) throw new Error('Gagal mengambil data');
-
         const data = await response.json();
-        
-        // Ambil data nilai dari JSON
-        const voltage = parseFloat(data.voltage || 0);
-        const current = parseFloat(data.current || 0);
-        const temperature = parseFloat(data.temperature || 0);
-        const humidity = parseFloat(data.humidity || 0);
-        const power = voltage * current;
+        const record = data.record;
 
-        // Update tampilan HTML
-        document.getElementById('val-voltage').innerText = voltage.toFixed(2);
-        document.getElementById('val-current').innerText = current.toFixed(2);
-        document.getElementById('val-power').innerText = power.toFixed(2);
-        document.getElementById('val-temp').innerText = temperature.toFixed(1);
-        document.getElementById('val-humidity').innerText = humidity.toFixed(1);
+        document.getElementById("solar_v").innerText = record.solar_voltage.toFixed(2);
+        document.getElementById("battery_v").innerText = record.battery_voltage.toFixed(2);
+        document.getElementById("current").innerText = record.current.toFixed(2);
+        document.getElementById("power").innerText = record.power.toFixed(2);
+        document.getElementById("temp").innerText = record.temperature.toFixed(1);
+        document.getElementById("humidity").innerText = record.humidity.toFixed(1);
 
-        const now = new Date();
-        document.getElementById('last-update').innerText = now.toLocaleTimeString();
-        document.getElementById('live-status').innerText = "LIVE (Realtime)";
-        document.getElementById('live-status').style.background = "#166534";
+        document.getElementById("status").innerText = "Sistem Aktif (Updated)";
+        document.getElementById("status").style.background = "#166534";
       } catch (error) {
-        console.error("Error fetching data:", error);
-        document.getElementById('live-status').innerText = "Terputus / Error";
-        document.getElementById('live-status').style.background = "#991b1b";
+        console.error("Ralat mengambil data:", error);
+        document.getElementById("status").innerText = "Sambungan Terputus";
+        document.getElementById("status").style.background = "#991b1b";
       }
     }
 
-    // Ambil data otomatis setiap 3 detik
-    setInterval(fetchSolarData, 3000);
-    fetchSolarData();
+    // Ambil data setiap 3 saat secara automatik
+    fetchData();
+    setInterval(fetchData, 3000);
   </script>
 </body>
 </html>
