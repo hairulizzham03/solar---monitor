@@ -18,9 +18,7 @@
     .card .unit { font-size: 1rem; color: #64748b; margin-left: 4px; }
 
     .solar { border-top: 4px solid #f59e0b; }
-    .battery { border-top: 4px solid #10b981; }
     .current { border-top: 4px solid #3b82f6; }
-    .power { border-top: 4px solid #8b5cf6; }
     .temp { border-top: 4px solid #ef4444; }
     .humidity { border-top: 4px solid #06b6d4; }
   </style>
@@ -34,20 +32,12 @@
 
   <div class="grid">
     <div class="card solar">
-      <h3>Voltan Solar</h3>
-      <div><span class="value" id="solar_v">0.00</span><span class="unit">V</span></div>
-    </div>
-    <div class="card battery">
-      <h3>Voltan Bateri</h3>
-      <div><span class="value" id="battery_v">0.00</span><span class="unit">V</span></div>
+      <h3>Voltan</h3>
+      <div><span class="value" id="voltage">0.00</span><span class="unit">V</span></div>
     </div>
     <div class="card current">
       <h3>Arus (ACS712)</h3>
       <div><span class="value" id="current">0.00</span><span class="unit">A</span></div>
-    </div>
-    <div class="card power">
-      <h3>Kuasa (Power)</h3>
-      <div><span class="value" id="power">0.00</span><span class="unit">W</span></div>
     </div>
     <div class="card temp">
       <h3>Suhu</h3>
@@ -75,12 +65,10 @@
         const data = await response.json();
         const record = data.record;
 
-        document.getElementById("solar_v").innerText = record.solar_voltage.toFixed(2);
-        document.getElementById("battery_v").innerText = record.battery_voltage.toFixed(2);
-        document.getElementById("current").innerText = record.current.toFixed(2);
-        document.getElementById("power").innerText = record.power.toFixed(2);
-        document.getElementById("temp").innerText = record.temperature.toFixed(1);
-        document.getElementById("humidity").innerText = record.humidity.toFixed(1);
+        document.getElementById("voltage").innerText = Number(record.voltage || 0).toFixed(2);
+        document.getElementById("current").innerText = Number(record.current || 0).toFixed(2);
+        document.getElementById("temp").innerText = Number(record.temperature || 0).toFixed(1);
+        document.getElementById("humidity").innerText = Number(record.humidity || 0).toFixed(1);
 
         document.getElementById("status").innerText = "Sistem Aktif (Updated)";
         document.getElementById("status").style.background = "#166534";
@@ -91,7 +79,6 @@
       }
     }
 
-    // Ambil data setiap 3 saat secara automatik
     fetchData();
     setInterval(fetchData, 3000);
   </script>
